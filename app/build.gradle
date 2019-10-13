@@ -25,4 +25,7 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+
+    implementation 'cn.kyle.support:activitystarter-annotation:1.0.0'
+    annotationProcessor 'cn.kyle.support:activitystarter-compiler:1.0.0'
 }
