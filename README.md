@@ -1,2 +1,2 @@
-# ActivityStarter
+# ActivityLauncher
 一个根据参数快速生成Activity启动方法的框架
