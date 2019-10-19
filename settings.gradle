@@ -1,1 +1,1 @@
-include ':app', ':starter_annotation', ':starter_compiler'
+include ':sample', ':launcher_annotation', ':launcher_compiler'

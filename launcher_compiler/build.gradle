@@ -1,0 +1,23 @@
+apply plugin: 'java-library'
+apply plugin: 'maven'
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation 'cn.cooper.support:activitylauncher-annotation:1.0.0'
+    implementation 'com.google.auto.service:auto-service:1.0-rc2'
+    implementation 'com.squareup:javapoet:1.10.0'
+}
+
+sourceCompatibility = "7"
+targetCompatibility = "7"
+
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            pom.groupId = 'cn.cooper.support'
+            pom.artifactId = 'activitylauncher-compiler'
+            pom.version = '1.0.0'
+            repository(url: uri('../repo'))
+        }
+    }
+}
