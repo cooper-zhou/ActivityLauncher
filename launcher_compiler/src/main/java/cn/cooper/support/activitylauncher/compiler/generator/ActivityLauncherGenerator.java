@@ -46,7 +46,8 @@ public class ActivityLauncherGenerator extends BaseCodeGenerator {
                 .addModifiers(Modifier.PUBLIC, Modifier.FINAL)
                 .addType(mBuilderGenerator.generateCode())
                 .addMethod(generateBuilderMethod())
-                .addMethod(generateStartMethod())
+                .addMethod(generateStartMethod(false))
+                .addMethod(generateStartMethod(true))
                 .addMethod(generateFillMethod())
                 .addMethod(generateSaveMethod())
                 .build();
@@ -96,15 +97,31 @@ public class ActivityLauncherGenerator extends BaseCodeGenerator {
      *   public static void start(Context context, Intent intent) {
      *       context.startActivity(intent);
      *   }
+     *
+     *   or
+     *
+     *   public static void startForResult(Activity activity, Intent intent, int requestCode) {
+     *       activity.startActivityForResult(intent, requestCode);
+     *   }
      * </code></pre>
      */
-    private MethodSpec generateStartMethod() {
-        return MethodSpec.methodBuilder("start")
+    private MethodSpec generateStartMethod(boolean forResult) {
+        Android launchContext = getLaunchContext(forResult);
+        String contextParam = launchContext == Android.Activity ? "activity" : "context";
+        MethodSpec.Builder builder = MethodSpec.methodBuilder(forResult ? "startForResult" : "start")
                 .addModifiers(Modifier.PRIVATE, Modifier.STATIC)
-                .addParameter(Android.Context.className(), "context")
-                .addParameter(Android.Intent.className(), "intent")
-                .addCode("context.startActivity(intent);\n")
-                .build();
+                .addParameter(launchContext.className(), contextParam)
+                .addParameter(Android.Intent.className(), "intent");
+        if (forResult) {
+            builder.addParameter(int.class, "requestCode");
+            builder.addCode("$L.startActivityForResult(intent, requestCode);\n", contextParam);
+        } else {
+            builder.addCode("$L.startActivity(intent);\n", contextParam);
+        }
+        if (hasLauncherPendingTransition() && hasLauncherPendingTransitionOnFinish()) {
+            builder.addCode("$L.overridePendingTransition($L, $L);\n", contextParam, getLauncherPendingTransition(), getLauncherPendingTransitionOnFinish());
+        }
+        return builder.build();
     }
 
     /**

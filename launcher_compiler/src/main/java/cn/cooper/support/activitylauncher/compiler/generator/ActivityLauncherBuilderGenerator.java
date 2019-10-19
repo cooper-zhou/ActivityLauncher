@@ -49,7 +49,8 @@ public class ActivityLauncherBuilderGenerator extends BaseCodeGenerator {
                 .addFields(generateFields())
                 .addMethod(generateConstructor())
                 .addMethods(generateOptionalMethods())
-                .addMethod(generateStartMethod())
+                .addMethod(generateStartMethod(false))
+                .addMethod(generateStartMethod(true))
                 .build();
     }
 
@@ -132,20 +133,51 @@ public class ActivityLauncherBuilderGenerator extends BaseCodeGenerator {
      *       intent.putExtra("optional2", optional2);
      *       MainActivityStarter.start(context, intent);
      *    }
+     *
+     *    or
+     *
+     *    public void startForResult(Activity activity, int requestCode) {
+     *       Intent intent = new Intent(context, MainActivity.class);
+     *       intent.putExtra("required1", required1);
+     *       intent.putExtra("required2", required2);
+     *       intent.putExtra("optional1", optional1);
+     *       intent.putExtra("optional2", optional2);
+     *       MainActivityStarter.startForResult(activity, intent, requestCode);
+     *    }
      * </code></pre>
+     *
+     * PS: The launch context will be limit into activity when it start with animation or start for result.
      */
-    private MethodSpec generateStartMethod() {
-        MethodSpec.Builder startMethod = MethodSpec.methodBuilder("start")
+    private MethodSpec generateStartMethod(boolean forResult) {
+        Android launchContext = getLaunchContext(forResult);
+        String contextParam = launchContext == Android.Activity ? "activity" : "context";
+        MethodSpec.Builder startMethod = MethodSpec.methodBuilder(forResult ? "startForResult" : "start")
                 .addModifiers(Modifier.PUBLIC)
-                .addParameter(Android.Context.className(), "context")
-                .addCode("$T intent = new $T(context, $T.class);\n", Android.Intent.className(), Android.Intent.className(), ClassName.bestGuess(getTargetClassName()));
+                .addParameter(launchContext.className(), contextParam)
+                .addCode("$T intent = new $T($L, $T.class);\n", Android.Intent.className(), Android.Intent.className(), contextParam, ClassName.bestGuess(getTargetClassName()));
         for (BundleExtraModel requiredExtra : mRequiredExtras) {
             startMethod.addCode("intent.putExtra($S, $L);\n", requiredExtra.getName(), requiredExtra.getName());
         }
         for (BundleExtraModel optionalExtra : mOptionalExtras) {
             startMethod.addCode("intent.putExtra($S, $L);\n", optionalExtra.getName(), optionalExtra.getName());
         }
-        startMethod.addCode("$T.start(context, intent);\n", ClassName.bestGuess(mOuterQualifiedName));
+        if (hasLauncherFlags()) {
+            // To set up the launcher mode.
+            int[] launcherFlags = getLauncherFlags();
+            StringBuilder allFlags = new StringBuilder();
+            for (int launcherFlag : launcherFlags) {
+                allFlags.append(launcherFlag).append("|");
+            }
+            allFlags.deleteCharAt(allFlags.length() - 1);
+            startMethod.addCode("intent.addFlags($L);\n", allFlags);
+        }
+        if (forResult) {
+            // startForResult
+            startMethod.addParameter(int.class, "requestCode");
+            startMethod.addCode("$T.startForResult($L, intent, requestCode);\n", ClassName.bestGuess(mOuterQualifiedName), contextParam);
+        } else {
+            startMethod.addCode("$T.start($L, intent);\n", ClassName.bestGuess(mOuterQualifiedName), contextParam);
+        }
         return startMethod.build();
     }
 }
