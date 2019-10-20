@@ -1,1 +1,1 @@
-include ':sample', ':launcher_annotation', ':launcher_compiler'
+include ':sample', ':launcher_annotation', ':launcher_compiler', ':launcher_core'

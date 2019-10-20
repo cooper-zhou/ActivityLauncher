@@ -2,10 +2,10 @@ package cn.cooper.support.activitylauncher.sample;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+
+import java.util.ArrayList;
 
 import cn.cooper.support.activitylauncher.annotation.Launcher;
 import cn.cooper.support.activitylauncher.annotation.OnActivityResult;
@@ -17,107 +17,97 @@ import cn.cooper.support.activitylauncher.annotation.Required;
         pendingTransition = R.anim.anim_slide_right_in,
         pendingTransitionOnFinish = R.anim.anim_slide_left_out
 )
-public class SecondActivity extends AppCompatActivity {
+public class SecondActivity extends BaseLauncherActivity {
 
-//    @Required boolean booleanType;
-//
-//    @Required Boolean booleanType2;
+    @Optional boolean booleanType;
 
-//    @Required boolean booleanType;
-//
-//    @Required Boolean booleanType2;
+    @Optional Boolean booleanType2;
 
-//    @Required byte byteType;
-//
-//    @Required Byte byteType2;
-//
-//    @Required short shortType;
-//
-//    @Required Short shortType2;
-//
-//    @Required int intType;
-//
-//    @Required Integer intType2;
-//
-//    @Required long longType;
-//
-//    @Required Long longType2;
-//
-//    @Required char charType;
-//
-//    @Required Character charType2;
-//
-//    @Required float floatType;
-//
-//    @Required Float floatType2;
-//
-//    @Required double doubleType;
-//
-//    @Required Double doubleType2;
+    @Optional byte byteType;
 
-//    @Required String stringType;
-//
-//    @Required boolean[] booleanArrayType;
+    @Optional Byte byteType2;
 
-//    @Required Boolean[] booleanArrayType2;
+    @Optional short shortType;
 
-//    @Required String[] stringArrayType;
-//
-//    @Required ArrayList<Integer> intListType;
-//
-//    @Required ArrayList<String> stringListType;
-//
-//    @Required SerializableObject serializableObject;
-//
-//    @Required ParcelObject parcelObject;
-//
-//    @Required ArrayList<ParcelObject> parcelListObject;
-//
-//    @Required ParcelObject[] parcelArrayObject;
-//
-//    @Optional Bundle bundeObejct;
+    @Optional Short shortType2;
 
-    @Required
-    User user;
+    @Optional int intType;
 
-    @Optional
-    int[] index;
+    @Optional Integer intType2;
 
-    @Optional
-    boolean selected;
+    @Optional long longType;
+
+    @Optional Long longType2;
+
+    @Optional char charType;
+
+    @Optional Character charType2;
+
+    @Optional float floatType;
+
+    @Optional Float floatType2;
+
+    @Optional double doubleType;
+
+    @Optional Double doubleType2;
+
+    @Optional String stringType;
+
+    @Optional CharSequence charSequenceType;
+
+    @Optional UserParcelable parcelType;
+
+    @Optional UserSerializable serializableType;
+
+    @Optional Bundle bundleType;
+
+
+
+    @Optional boolean[] booleanArrayType;
+
+    @Optional byte[] byteArrayType;
+
+    @Optional short[] shortArrayType;
+
+    @Optional int[] intArrayType;
+
+    @Optional long[] longArrayType;
+
+    @Optional char[] charArrayType;
+
+    @Optional float[] floatArrayType;
+
+    @Optional double[] doubleArrayType;
+
+    @Optional String[] stringArrayType;
+
+    @Optional CharSequence[] charSequenceArrayType;
+
+    @Optional UserParcelable[] parcelArrayObject;
+
+
+
+    @Optional ArrayList<Integer> intListType;
+
+    @Optional ArrayList<String> stringListType;
+
+    @Optional ArrayList<CharSequence> charSequenceListType;
+
+    @Optional ArrayList<UserParcelable> parcelListType;
+
+    @Required int optionId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_second);
-        SecondActivityLauncher.fill(this, savedInstanceState);
-        Log.d("user", user.toString());
+        Log.d("user", parcelType.getId() + " - " + parcelType.getName());
         findViewById(R.id.btn_back_main).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 finish();
             }
         });
-    }
-
-    @Override
-    protected void onNewIntent(Intent intent) {
-        super.onNewIntent(intent);
-        if (intent != null && intent.getExtras() != null) {
-            SecondActivityLauncher.fill(this, intent.getExtras());
-        }
-    }
-
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        SecondActivityLauncher.save(this, outState);
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        SecondActivityLauncher.dispatchResult(this, requestCode, resultCode, data);
     }
 
     @OnActivityResult(requestCode = 1, resultCode = RESULT_OK)

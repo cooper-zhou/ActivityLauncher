@@ -2,12 +2,12 @@ package cn.cooper.support.activitylauncher.sample;
 
 import java.io.Serializable;
 
-public class User implements Serializable {
+public class UserSerializable implements Serializable {
 
     private String id;
     private String name;
 
-    public User(String id, String name) {
+    public UserSerializable(String id, String name) {
         this.id = id;
         this.name = name;
     }
@@ -30,7 +30,7 @@ public class User implements Serializable {
 
     @Override
     public String toString() {
-        return "User{" +
+        return "UserSerializable{" +
                 "id='" + id + '\'' +
                 ", name='" + name + '\'' +
                 '}';

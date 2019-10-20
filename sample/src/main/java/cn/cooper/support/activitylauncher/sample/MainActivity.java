@@ -14,8 +14,8 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.btn_start_second).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                SecondActivityLauncher.builder(new User("123", "Hallo"))
-                        .selected(true)
+                SecondActivityLauncher.builder(1234)
+                        .parcelType(new UserParcelable("1234", "Hallo"))
                         .start(MainActivity.this);
             }
         });
