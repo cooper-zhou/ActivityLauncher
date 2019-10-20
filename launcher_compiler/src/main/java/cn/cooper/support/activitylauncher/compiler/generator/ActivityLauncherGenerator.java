@@ -1,16 +1,19 @@
 package cn.cooper.support.activitylauncher.compiler.generator;
 
-import cn.cooper.support.activitylauncher.compiler.model.BundleExtraModel;
-import cn.cooper.support.activitylauncher.compiler.model.BundleExtraType;
-import cn.cooper.support.activitylauncher.compiler.utils.Android;
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.TypeSpec;
 
+import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.Modifier;
 import javax.lang.model.element.PackageElement;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
+
+import cn.cooper.support.activitylauncher.compiler.model.ActivityResultModel;
+import cn.cooper.support.activitylauncher.compiler.model.BundleExtraModel;
+import cn.cooper.support.activitylauncher.compiler.model.BundleExtraType;
+import cn.cooper.support.activitylauncher.compiler.utils.Android;
 
 /**
  * {@link CodeGenerator} for ActivityStarter.
@@ -50,6 +53,7 @@ public class ActivityLauncherGenerator extends BaseCodeGenerator {
                 .addMethod(generateStartMethod(true))
                 .addMethod(generateFillMethod())
                 .addMethod(generateSaveMethod())
+                .addMethod(generateDispatchResultMethod())
                 .build();
     }
 
@@ -209,5 +213,23 @@ public class ActivityLauncherGenerator extends BaseCodeGenerator {
     private String bundlePutValueMethod(BundleExtraModel bundleExtraModel) {
         BundleExtraType bundleExtraType = bundleExtraModel.getExtraType();
         return bundleExtraType == BundleExtraType.Unknown ? "put" : "put" + bundleExtraType.name();
+    }
+
+    private MethodSpec generateDispatchResultMethod() {
+        MethodSpec.Builder dispatchResultMethod = MethodSpec.methodBuilder("dispatchResult")
+                .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
+                .addParameter(ClassName.bestGuess(getTargetClassName()), "activity")
+                .addParameter(int.class, "requestCode")
+                .addParameter(int.class, "resultCode")
+                .addParameter(Android.Intent.className(), "data");
+        if (mActivityResultMethods != null) {
+            for (ActivityResultModel resultModel : mActivityResultMethods) {
+                dispatchResultMethod.addCode("if (requestCode == $L && resultCode == $L) {\n",
+                        resultModel.getRequestCode(), resultModel.getResultCode());
+                dispatchResultMethod.addCode("  activity.$L(data);\n", resultModel.getMethodName());
+                dispatchResultMethod.addCode("}\n");
+            }
+        }
+        return dispatchResultMethod.build();
     }
 }

@@ -8,14 +8,15 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Means the argument is optional when start activity.
- * <pre><code>
- * {@literal @}Optional int id;
- * </code></pre>
+ * To identify a method for handling activity result.
  */
-@Target(ElementType.FIELD)
+@Target(ElementType.METHOD)
 @Retention(RetentionPolicy.CLASS)
 @Documented
 @Inherited
-public @interface Optional {
+public @interface OnActivityResult {
+
+    int requestCode();
+
+    int resultCode();
 }

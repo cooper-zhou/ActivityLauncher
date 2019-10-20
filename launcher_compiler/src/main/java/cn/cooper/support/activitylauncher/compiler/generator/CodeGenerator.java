@@ -2,6 +2,7 @@ package cn.cooper.support.activitylauncher.compiler.generator;
 
 import com.squareup.javapoet.TypeSpec;
 
+import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.VariableElement;
 
 /**
@@ -20,4 +21,6 @@ public interface CodeGenerator {
     boolean putRequiredElement(VariableElement element);
 
     boolean putOptionalElement(VariableElement element);
+
+    boolean putActivityResultElement(ExecutableElement element);
 }

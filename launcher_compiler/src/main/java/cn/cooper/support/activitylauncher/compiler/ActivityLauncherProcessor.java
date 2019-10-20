@@ -3,6 +3,7 @@ package cn.cooper.support.activitylauncher.compiler;
 import com.google.auto.service.AutoService;
 
 import cn.cooper.support.activitylauncher.annotation.Launcher;
+import cn.cooper.support.activitylauncher.annotation.OnActivityResult;
 import cn.cooper.support.activitylauncher.annotation.Optional;
 import cn.cooper.support.activitylauncher.annotation.Required;
 import cn.cooper.support.activitylauncher.compiler.generator.ActivityLauncherGenerator;
@@ -21,6 +22,7 @@ import javax.annotation.processing.Processor;
 import javax.annotation.processing.RoundEnvironment;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.Element;
+import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
 
@@ -74,6 +76,16 @@ public class ActivityLauncherProcessor extends AbstractProcessor {
             CodeGenerator generator = mCodeGeneratorMap.get(fullClassName);
             if (generator != null) {
                 generator.putOptionalElement(variableElement);
+            }
+        }
+        // To handle OnActivityResult annotations
+        Set<? extends Element> resultElements = roundEnvironment.getElementsAnnotatedWith(OnActivityResult.class);
+        for (Element element : resultElements) {
+            ExecutableElement executableElement = (ExecutableElement) element;
+            String fullClassName = ((TypeElement) executableElement.getEnclosingElement()).getQualifiedName().toString();
+            CodeGenerator generator = mCodeGeneratorMap.get(fullClassName);
+            if (generator != null) {
+                generator.putActivityResultElement(executableElement);
             }
         }
         for (String key : mCodeGeneratorMap.keySet()) {

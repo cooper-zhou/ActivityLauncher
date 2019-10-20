@@ -2,11 +2,13 @@ package cn.cooper.support.activitylauncher.sample;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 
 import cn.cooper.support.activitylauncher.annotation.Launcher;
+import cn.cooper.support.activitylauncher.annotation.OnActivityResult;
 import cn.cooper.support.activitylauncher.annotation.Optional;
 import cn.cooper.support.activitylauncher.annotation.Required;
 
@@ -110,5 +112,16 @@ public class SecondActivity extends AppCompatActivity {
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         SecondActivityLauncher.save(this, outState);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        SecondActivityLauncher.dispatchResult(this, requestCode, resultCode, data);
+    }
+
+    @OnActivityResult(requestCode = 1, resultCode = RESULT_OK)
+    public void handleTakePhoto(Intent data) {
+
     }
 }
