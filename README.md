@@ -1,2 +1,3 @@
 # ActivityLauncher
-一个根据参数快速生成Activity启动方法的框架
+A solution to make it easy to launch an activity with parameters.
+
