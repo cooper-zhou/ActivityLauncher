@@ -62,7 +62,7 @@ public class MainActivity extends AppCompatActivity {
 allprojects {
     repositories {
         maven {
-            url uri('https://raw.githubusercontent.com/cooper-zhou/ActivityLauncher/master/repo')
+            url uri('https://raw.githubusercontent.com/cooperise/ActivityLauncher/master/repo')
         }
     }
 }
